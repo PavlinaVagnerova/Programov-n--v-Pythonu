@@ -5,29 +5,22 @@ from abc import ABC, abstractmethod
 class Property (ABC):
     def __init__(self,locality):
         self.locality = locality
+    @abstractmethod
+    def calculate_tax():
+        pass
 
 class Locality:
     def __init__(self, name, locality_coefficient):
         self.name = name
         self.locality_coefficient = locality_coefficient
 
-# Bonus enum třídy - nedořešeno
+# Bonus enum třídy
 import enum
-class Estate_type(enum.Enum):
-    land = 1
-    building_site = 2
-    forrest = 3
-    garden = 4
-di = {}
-di[Estate_type.land] = "land"
-di[Estate_type.building_site] = "building site"
-di[Estate_type.forrest] = "forrest"
-di[Estate_type.garden] = "garden"
-
-if di == {Estate_type.land: "land", Estate_type.building_site: "building site", Estate_type.forrest: "forrest", Estate_type.garden: "garden"}:
-    print("Typ nemovitosti existuje")
-else:
-    print("Typ nemovitosti neexistuje.")
+class EnEstate_type(enum.Enum):
+    land = 0.85
+    building_site = 9
+    forrest = 0.35
+    garden = 2
 
 
 class Estate(Property):
@@ -38,14 +31,7 @@ class Estate(Property):
     
     
     def calculate_tax(self):
-        if self.estate_type == "land":
-            tax = self.area*0.85*self.locality.locality_coefficient
-        elif self.estate_type == "building site":
-            tax = self.area*9*self.locality.locality_coefficient
-        elif self.estate_type == "forrest":
-            tax = self.area*0.35*self.locality.locality_coefficient
-        else:
-            tax = self.area*2*self.locality.locality_coefficient
+        tax = self.area*self.estate_type.value*self.locality.locality_coefficient
         return math.ceil(tax)
     # Bonus - doplnění metody __str__
     def __str__(self):
@@ -96,7 +82,7 @@ class TaxReport:
 manetin = Locality("Manětín", 0.8)
 brno = Locality("Brno", 3)
 
-zemedelsky_pozemek = Estate(manetin, "land", 900)
+zemedelsky_pozemek = Estate(manetin, EnEstate_type.land, 900)
 dum = Residence(manetin, 120, False)
 kancelar = Residence(brno, 90, True)
 
